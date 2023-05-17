@@ -26,14 +26,14 @@ for userid in userids:
     cart = session.execute(prepared_statement, [userid]).one()
     print(cart)
 
-# #! Writing data into cassandra
-# session.execute("INSERT INTO store.shopping_cart (userid, item_count, last_update_timestamp) VALUES ('3', 13, toTimeStamp(now()));")
-# session.execute_async("INSERT INTO store.shopping_cart (userid, item_count, last_update_timestamp) VALUES ('4', 14, toTimeStamp(now()));")
+#! Writing data into cassandra
+session.execute("INSERT INTO store.shopping_cart (userid, item_count, last_update_timestamp) VALUES ('3', 13, toTimeStamp(now()));")
+session.execute_async("INSERT INTO store.shopping_cart (userid, item_count, last_update_timestamp) VALUES ('4', 14, toTimeStamp(now()));")
 
-# rows = session.execute('SELECT * FROM store.shopping_cart;')
-# for cart_row in rows:
-#     print(cart_row)
-#     print(f'id: {cart_row.userid}, item_count: {cart_row.item_count}.')
+rows = session.execute('SELECT * FROM store.shopping_cart;')
+for cart_row in rows:
+    print(cart_row)
+    print(f'id: {cart_row.userid}, item_count: {cart_row.item_count}.')
 
 #! Updating data in cassandra
 session.execute("ALTER TABLE store.shopping_cart ADD cart_type text;")
@@ -44,3 +44,30 @@ rows = session.execute('SELECT * FROM store.shopping_cart;')
 for cart_row in rows:
     print(cart_row)
     print(f'id: {cart_row.userid}, item_count: {cart_row.item_count}.')
+
+
+#! Reading Data From Cassandra [simple query]
+print("Reading data simply..")
+rows = session.execute('SELECT * FROM store.users;')
+for user_row in rows:
+    print(user_row)
+
+# session.execute("INSERT INTO store.users (id, name, favs)    VALUES ('wsmith', 'Will Smith', { 'fruit' : 'Orange', 'band' : 'Beatles', 'celebrity':'Jaden Smith' });")
+
+rows = session.execute('SELECT * FROM store.users;')
+for user_row in rows:
+    print(user_row.favs)
+
+session.execute("""
+CREATE TABLE store.images (
+   name text PRIMARY KEY,
+   owner text,
+   tags set<text>
+);
+"""
+)
+session.execute("INSERT INTO store.images (name, owner, tags) VALUES ('cat.jpg', 'jsmith', { 'pet', 'cute' });")
+
+rows = session.execute('SELECT * FROM store.images;')
+for image_row in rows:
+    print(image_row)
